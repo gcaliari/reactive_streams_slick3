@@ -1,8 +1,32 @@
-logs
-target
-/.idea
-/.idea_modules
-/.classpath
-/.project
-/.settings
+target/
+logs/
+project/project/
+project/target/
+tmp/
+.cache
+/bin
+/.target
 /RUNNING_PID
+
+# intellij IDEA project files
+*.iml
+.idea/
+.idea_modules/
+
+# Eclipse project files
+.classpath
+.externalToolBuilders
+.project
+.settings/
+
+# Windows stuff
+Thumbs.db
+
+# Mac Stuff
+*.DS_Store
+run.sh
+.gradle
+gradle/
+gradlew
+gradlew.bat
+
