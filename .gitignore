@@ -9,7 +9,6 @@ tmp/
 /RUNNING_PID
 
 # intellij IDEA project files
-*.iml
 .idea/
 .idea_modules/
 
