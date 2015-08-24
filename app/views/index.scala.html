@@ -1,7 +1,16 @@
 @(message: String)
 
-@main("Welcome to Play") {
+@main("Reactive Streams") {
 
-    @play20.welcome(message)
+    @message
+    <br>
+    <br>
+
+    <a href="@routes.Application.createDb()"> Create Data </a>
+    <br>
+    <a href="@routes.Application.deleteDb()"> Destroy Data </a>
+    <br>
+    <br>
+    <a href="@routes.Application.csvStream()"> Start Streaming! </a>
 
 }
