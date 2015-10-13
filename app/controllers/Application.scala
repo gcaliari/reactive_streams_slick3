@@ -19,8 +19,8 @@ class Application extends Controller {
     Ok(views.html.index("Welcome! First created the DB, then stream the results"))
   }
 
-  def makeDbData = Action.async {
-    User.makeDbData().map { r =>
+  def createAndPopulateDb = Action.async {
+    User.createAndPopulateDb().map { r =>
       Ok(views.html.index("DB Created and populated!"))
     }
   }
