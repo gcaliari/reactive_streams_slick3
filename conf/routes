@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                                 @controllers.Application.index
-GET     /create                           @controllers.Application.createDb
+GET     /create                           @controllers.Application.makeDbData
 GET     /delete                           @controllers.Application.deleteDb
 GET     /stream                           @controllers.Application.csvStream
 

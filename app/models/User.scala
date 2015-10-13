@@ -41,7 +41,7 @@ object User {
     db.stream(query)
   }
 
-  def createDb() = {
+  def makeDbData() = {
     db.run(userTableQuery.schema.create).flatMap { r =>
       populateDb()
     }

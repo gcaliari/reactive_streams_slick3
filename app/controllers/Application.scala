@@ -16,12 +16,12 @@ class Application extends Controller {
   val charset = UTF_16LE
 
   def index = Action {
-    Ok(views.html.index("WelcomeFirst created the DB then stream the results"))
+    Ok(views.html.index("Welcome! First created the DB, then stream the results"))
   }
 
-  def createDb = Action.async {
-    User.createDb().map { r =>
-      Ok(views.html.index("DB Created!"))
+  def makeDbData = Action.async {
+    User.makeDbData().map { r =>
+      Ok(views.html.index("DB Created and populated!"))
     }
   }
 
