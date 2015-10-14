@@ -31,7 +31,16 @@ class ApplicationSpec extends PlaySpecification {
       contentType(home) must beSome.which(_ == "text/html")
       contentAsString(home) must contain ("DB Created and populated!")
 
-      Await.result(User.count(), 1 second) must equalTo(99999)
+      Await.result(User.count(), 2 seconds) must equalTo(99999)
     }
+
+    "delete data from database" in new WithApplication {
+      val home = route(FakeRequest(GET, "/delete")).get
+
+      status(home) must equalTo(OK)
+      contentType(home) must beSome.which(_ == "text/html")
+      contentAsString(home) must contain ("DB Deleted!")
+    }
+
   }
 }
