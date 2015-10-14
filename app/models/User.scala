@@ -46,6 +46,7 @@ object User {
   }
 
   def createAndPopulateDb() = {
+    //TODO use evolutions
     db.run(userTableQuery.schema.create).flatMap { r =>
       populateDb()
     }
