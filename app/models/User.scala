@@ -41,6 +41,10 @@ object User {
     db.stream(query)
   }
 
+  def count(): Future[Int] = {
+    db.run{ userTableQuery.length.result }
+  }
+
   def createAndPopulateDb() = {
     db.run(userTableQuery.schema.create).flatMap { r =>
       populateDb()
