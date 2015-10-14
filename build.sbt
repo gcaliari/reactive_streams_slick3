@@ -11,9 +11,9 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   specs2 % Test,
-  "com.typesafe.play" %% "play-slick" % "1.0.0",
-  "com.typesafe.play" % "play-streams-experimental_2.11" % "2.4.2",
-  "com.typesafe.slick" %% "slick" % "3.0.0"
+  "com.typesafe.play" %% "play-slick" % "1.1.0",
+  "com.typesafe.play" % "play-streams-experimental_2.11" % "2.4.3",
+  "com.typesafe.slick" %% "slick" % "3.1.0"
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
