@@ -24,32 +24,5 @@ class ApplicationSpec extends PlaySpecification {
       contentAsString(home) must contain ("Welcome! First created the DB, then stream the results")
     }
 
-    "create and populate database" in new WithApplication {
-      val createPage = route(FakeRequest(GET, "/create")).get
-
-      status(createPage) must equalTo(OK)
-      contentType(createPage) must beSome.which(_ == "text/html")
-      contentAsString(createPage) must contain ("DB Created and populated!")
-
-      Await.result(User.count(), 2 seconds) must equalTo(99999)
-    }
-
-    "send stream of data" in new WithApplication {
-      val csvFile = route(FakeRequest(GET, "/stream")).get
-
-      status(csvFile) must equalTo(OK)
-      contentType(csvFile) must beSome.which(_ == "text/csv")
-      contentAsString(csvFile) must contain (""""Id","Name","Document","Enabled"""".stripMargin)
-      contentAsString(csvFile) must contain ("Logan_")
-    }
-
-    "delete data from database" in new WithApplication {
-      val deletePage = route(FakeRequest(GET, "/delete")).get
-
-      status(deletePage) must equalTo(OK)
-      contentType(deletePage) must beSome.which(_ == "text/html")
-      contentAsString(deletePage) must contain ("DB Deleted!")
-    }
-
   }
 }
