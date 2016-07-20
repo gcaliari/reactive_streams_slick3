@@ -2,19 +2,11 @@ package controllers
 
 import java.nio.charset.StandardCharsets.UTF_16LE
 
-import akka.NotUsed
-import akka.stream.scaladsl.{Source, StreamConverters}
-import akka.util.ByteString
+import akka.stream.scaladsl.Source
 import models.User
-import org.joda.time.DateTime
-import play.api.http.HttpEntity
-import play.api.libs.Comet
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.iteratee.Enumerator
 import play.api.libs.json.Json
-import play.api.libs.streams.Streams
 import play.api.mvc._
-import slick.backend.DatabasePublisher
 
 import scala.concurrent.Future
 
