@@ -8,7 +8,7 @@ import slick.lifted.TableQuery
 
 import scala.concurrent.Future
 
-case class User(name: String, documentNumber: String, enabled: Boolean, id: Option[Int])
+case class User(name: String, documentNumber: String, enabled: Boolean = true, id: Option[Int] = None)
 
 class Users(tag: Tag) extends Table[User](tag, "users") {
   def name           = column[String]("name")
@@ -63,7 +63,7 @@ object User {
       val numRows= maxRows - length
       db.run(
         DBIO.seq(
-          userTableQuery ++= (1 to numRows).map( i => User("Logan_" + i, i + "00", true, None) ).toSeq
+          userTableQuery ++= (1 to numRows).map( i => User("Logan_" + i, i + "00") ).toSeq
         )
       )
     }
@@ -72,7 +72,7 @@ object User {
   def create(numRows: Int): Future[Unit] = {
     db.run(
       DBIO.seq(
-        userTableQuery ++= (1 to numRows).map( i => User("Logan_" + i, i + "00", true, None) ).toSeq
+        userTableQuery ++= (1 to numRows).map( i => User("Logan_" + i, i + "00") ).toSeq
       )
     )
   }
