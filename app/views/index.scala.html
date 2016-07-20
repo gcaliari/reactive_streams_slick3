@@ -1,4 +1,4 @@
-@(message: String)
+@(message: String, millions: Int)
 
 @main("Reactive Streams") {
 
@@ -6,10 +6,11 @@
     <br>
     <br>
 
-    <a href="@routes.UserController.createOneMillion()">
-        Create 1M users
-        <img src="@routes.Assets.versioned("images/1million.jpg")" width="200px"/>
-    </a>
+    <a href="@routes.UserController.createOneMillion()">Create 1 Million users</a>
+    @for(i <- (1 to millions)) {
+      <img src="@{routes.Assets.versioned("images/oneMillion.jpg")}" width="200px"/>
+    }
+    <br>
     <br>
     <a href="@routes.UserController.deleteAll()"> Delete all users </a>
     <br>

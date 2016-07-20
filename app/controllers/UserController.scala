@@ -23,14 +23,13 @@ class UserController @Inject()(userRepository: UserRepository) extends Controlle
 
   def create(rows: Int)= Action.async {
     userRepository.create(rows).map { r =>
-
-      Redirect(routes.Application.index())//s"+1M users created on ${DateTime.now}!"))
+      Redirect(routes.Application.index())
     }
   }
 
   def deleteAll() = Action.async {
     userRepository.deleteAll().map { r =>
-      Ok(views.html.index("All users deleted!"))
+      Redirect(routes.Application.index())
     }
   }
 

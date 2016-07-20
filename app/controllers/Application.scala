@@ -1,10 +1,15 @@
 package controllers
 
+import com.google.inject.Inject
+import models.UserRepository
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 
-class Application extends Controller {
+class Application @Inject()(userRepository: UserRepository) extends Controller {
 
-  def index = Action {
-    Ok(views.html.index("Welcome! First created the DB, then stream the results"))
+  def index = Action.async {
+    userRepository.count().map{ count =>
+      Ok(views.html.index("Welcome! First created some users, then stream the results", count / 1000000))
+    }
   }
 }
