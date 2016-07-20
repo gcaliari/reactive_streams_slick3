@@ -28,6 +28,15 @@ object User {
     }
   }
 
+  def userSeq(nameOpt: Option[String] = None): Future[Seq[User]] = {
+    val query = userTableQuery
+      .sortBy( _.name.asc )
+      .ifThen(nameOpt.isDefined) { _.filter( _.name   ===   nameOpt.get ) }
+      .result
+
+    db.run(query)
+  }
+
   def userStream(nameOpt: Option[String] = None): DatabasePublisher[User] = {
     val query = userTableQuery
       .sortBy( _.name.asc )
