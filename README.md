@@ -3,8 +3,9 @@ A reactive streams example using play framework and slick 3
 
 ### Usage
 * setup environment
-* execute `sbt -mem 80 run`
+* execute `sbt -J-Xmx2g run`
 * navigate to `localhost:9000`
-* click "Create +1000 users" at least once
-* click "Start Streaming!" to Start Streaming!
-* experiment with more or less users
+* Create 1 million users
+* Request and Streaming should work
+* Create extra 2 million users
+* Streaming should work, Request should'n
