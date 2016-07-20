@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                                      @controllers.Application.index
-GET     /user/create                           @controllers.UserController.create(rows: Int)
+GET     /user/createOneMillion                 @controllers.UserController.createOneMillion
 GET     /user/deleteAll                        @controllers.UserController.deleteAll
 GET     /user/stream                           @controllers.UserController.csvStream
 GET     /user/response                         @controllers.UserController.csvResponse
