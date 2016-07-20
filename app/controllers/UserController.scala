@@ -2,13 +2,17 @@ package controllers
 
 import java.nio.charset.StandardCharsets.UTF_16LE
 
-import akka.stream.scaladsl.Source
+import akka.NotUsed
+import akka.stream.scaladsl.{Source, StreamConverters}
+import akka.util.ByteString
 import models.User
 import org.joda.time.DateTime
 import play.api.http.HttpEntity
+import play.api.libs.Comet
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.iteratee.Enumerator
 import play.api.libs.json.Json
+import play.api.libs.streams.Streams
 import play.api.mvc._
 import slick.backend.DatabasePublisher
 
@@ -21,7 +25,8 @@ class UserController extends Controller {
 
   def create(rows: Int)= Action.async {
     User.create(rows).map { r =>
-      Ok(views.html.index(s"+3M users created on ${DateTime.now}!"))
+
+      Redirect(routes.Application.index())//s"+1M users created on ${DateTime.now}!"))
     }
   }
 
@@ -41,11 +46,10 @@ class UserController extends Controller {
 
   def csvStream = Action.async {
     Future {
-      val userStream: DatabasePublisher[User] = User.userStream()
-      val userEnum: Enumerator[User] = play.api.libs.streams.Streams.publisherToEnumerator(userStream)
-      val byteArrayEnumerator: Enumerator[Array[Byte]] = Enumerator(csvHeader.getBytes(charset)) >>> userEnum.map(user => userToCsv(user).getBytes(charset))
+      implicit val userFormat = Json.format[User]
 
-      Ok.chunked[Array[Byte]](byteArrayEnumerator).as(s"text/csv; charset=$charset")
+      val userSource = Source.fromPublisher(User.userStream().mapResult(u => Json.toJson(u)))
+      Ok.chunked(userSource).as(s"text/csv; charset=$charset")
         .withHeaders(CONTENT_ENCODING -> charset.name)
         .withHeaders(CONTENT_DISPOSITION -> s"attachment; filename=$filename")
     }
