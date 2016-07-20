@@ -3,7 +3,6 @@ package models
 import javax.inject.Inject
 
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import slick.backend.DatabasePublisher
 import slick.driver.JdbcProfile
 
@@ -12,7 +11,7 @@ import scala.concurrent.Future
 class UserRepository  @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
   import driver.api._
 
-  private val userTableQuery = TableQuery[UserTable]
+  private val userTable = TableQuery[UserTable]
 
   private type UserQuery = Query[UserTable, User, Seq]
   implicit class FilterHelper[UserQuery](q: UserQuery) {
@@ -22,7 +21,7 @@ class UserRepository  @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   }
 
   def userSeq(nameOpt: Option[String] = None): Future[Seq[User]] = {
-    val query = userTableQuery
+    val query = userTable
       .sortBy( _.name.asc )
       .ifThen(nameOpt.isDefined) { _.filter( _.name   ===   nameOpt.get ) }
       .result
@@ -31,7 +30,7 @@ class UserRepository  @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   }
 
   def userStream(nameOpt: Option[String] = None): DatabasePublisher[User] = {
-    val query = userTableQuery
+    val query = userTable
       .sortBy( _.name.asc )
       .ifThen(nameOpt.isDefined) { _.filter( _.name   ===   nameOpt.get ) }
       .result
@@ -40,38 +39,19 @@ class UserRepository  @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   }
 
   def count(): Future[Int] = {
-    db.run{ userTableQuery.length.result }
-  }
-
-  def createDb() = {
-    db.run(userTableQuery.schema.create)
-  }
-
-  def destroyDb() = {
-    db.run(userTableQuery.schema.drop)
-  }
-
-  def populateDbWithMax(maxRows: Int = 99999): Future[Unit] = {
-    db.run(userTableQuery.length.result).flatMap { length =>
-      val numRows= maxRows - length
-      db.run(
-        DBIO.seq(
-          userTableQuery ++= (1 to numRows).map( i => User("Logan_" + i, i + "00") )
-        )
-      )
-    }
+    db.run{ userTable.length.result }
   }
 
   def create(numRows: Int): Future[Unit] = {
-    db.run(
+    db.run (
       DBIO.seq(
-        userTableQuery ++= (1 to numRows).map( i => User("Logan_" + i, i + "00") )
+        userTable ++= (1 to numRows).map(i => User("Logan_" + i, i + "00"))
       )
     )
   }
 
   def deleteAll(): Future[Int] = {
-    db.run(userTableQuery.delete)
+    db.run(userTable.delete)
   }
 
 
