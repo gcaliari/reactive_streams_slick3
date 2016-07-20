@@ -2,10 +2,13 @@ package controllers
 
 import java.nio.charset.StandardCharsets.UTF_16LE
 
+import akka.stream.scaladsl.Source
 import models.User
 import org.joda.time.DateTime
+import play.api.http.HttpEntity
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.iteratee.Enumerator
+import play.api.libs.json.Json
 import play.api.mvc._
 import slick.backend.DatabasePublisher
 
@@ -18,13 +21,21 @@ class UserController extends Controller {
 
   def create(rows: Int)= Action.async {
     User.create(rows).map { r =>
-      Ok(views.html.index(s"+1000 users created on ${DateTime.now}!"))
+      Ok(views.html.index(s"+3M users created on ${DateTime.now}!"))
     }
   }
 
   def deleteAll() = Action.async {
     User.deleteAll().map { r =>
       Ok(views.html.index("All users deleted!"))
+    }
+  }
+
+  def csvResponse = Action.async {
+    User.userSeq().map { users =>
+      Ok(users.mkString(";")).as(s"text/csv; charset=$charset")
+        .withHeaders(CONTENT_ENCODING -> charset.name)
+        .withHeaders(CONTENT_DISPOSITION -> s"attachment; filename=$filename")
     }
   }
 
