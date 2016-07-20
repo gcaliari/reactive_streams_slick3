@@ -4,7 +4,7 @@ create table "users" (
     "name"           VARCHAR NOT NULL,
     "documentNumber" VARCHAR NOT NULL,
     "enabled"        BOOLEAN NOT NULL,
-    "id"             INT     NOT NULL PRIMARY KEY
+    "id"             INT     NOT NULL PRIMARY KEY AUTO_INCREMENT
 );
 
 # --- !Downs
