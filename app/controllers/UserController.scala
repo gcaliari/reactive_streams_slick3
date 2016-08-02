@@ -2,18 +2,20 @@ package controllers
 
 import java.nio.charset.StandardCharsets.UTF_16LE
 
+import akka.NotUsed
 import akka.stream.scaladsl.Source
 import com.google.inject.Inject
 import models.{User, UserRepository}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json.Json
+import play.api.libs.json.{JsArray, JsValue, Json}
 import play.api.mvc._
+import slick.backend.DatabasePublisher
 
 import scala.concurrent.Future
 
 class UserController @Inject()(userRepository: UserRepository) extends Controller {
 
-  val filename = "reactive_streams.csv"
+  val filename = "reactive_streams.json"
   val charset = UTF_16LE
 
   def createOneMillion()= {
@@ -34,19 +36,21 @@ class UserController @Inject()(userRepository: UserRepository) extends Controlle
   }
 
   def csvResponse = Action.async {
+    implicit val userFormat = Json.format[User]
     userRepository.userSeq().map { users =>
-      Ok(users.mkString(";")).as(s"text/csv; charset=$charset")
+      Ok(new JsArray(users.map(u => Json.toJson(u)))).as(s"text/json; charset=$charset")
         .withHeaders(CONTENT_ENCODING -> charset.name)
         .withHeaders(CONTENT_DISPOSITION -> s"attachment; filename=$filename")
     }
   }
 
   def csvStream = Action.async {
+    implicit val userFormat = Json.format[User]
     Future {
-      implicit val userFormat = Json.format[User]
+      val userPublisher: DatabasePublisher[JsValue] = userRepository.userStream().mapResult(u => Json.toJson(u))
+      val userSource: Source[JsValue, NotUsed] = Source.fromPublisher(userPublisher)
 
-      val userSource = Source.fromPublisher(userRepository.userStream().mapResult(u => Json.toJson(u)))
-      Ok.chunked(userSource).as(s"text/csv; charset=$charset")
+      Ok.chunked(userSource).as(s"text/json; charset=$charset")
         .withHeaders(CONTENT_ENCODING -> charset.name)
         .withHeaders(CONTENT_DISPOSITION -> s"attachment; filename=$filename")
     }
