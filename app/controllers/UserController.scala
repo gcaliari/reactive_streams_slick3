@@ -7,7 +7,7 @@ import akka.stream.scaladsl.Source
 import com.google.inject.Inject
 import models.{User, UserRepository}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json.{JsArray, JsValue, Json}
+import play.api.libs.json.{JsArray, Json}
 import play.api.mvc._
 import slick.backend.DatabasePublisher
 
@@ -47,23 +47,12 @@ class UserController @Inject()(userRepository: UserRepository) extends Controlle
   def csvStream = Action.async {
     implicit val userFormat = Json.format[User]
     Future {
-      val userPublisher: DatabasePublisher[JsValue] = userRepository.userStream().mapResult(u => Json.toJson(u))
-      val userSource: Source[JsValue, NotUsed] = Source.fromPublisher(userPublisher)
-
-      Ok.chunked(userSource).as(s"text/json; charset=$charset")
+      val userPublisher: DatabasePublisher[String] = userRepository.userStream().mapResult(u => Json.toJson(u).toString)
+      val userSource: Source[String, NotUsed] = Source.fromPublisher(userPublisher)
+      Ok.chunked(userSource.intersperse("[", ",", "]")).as(s"text/json; charset=$charset")
         .withHeaders(CONTENT_ENCODING -> charset.name)
         .withHeaders(CONTENT_DISPOSITION -> s"attachment; filename=$filename")
     }
   }
 
-
-  private val csvHeader =
-    """sep=,
-      |"Id","Name","Document","Enabled"""".stripMargin
-
-
-  private def userToCsv(user: User): String = {
-    "\n" + List(user.id.getOrElse("--"), user.name, user.documentNumber, user.enabled).map("\"%s\"".format(_)).mkString(",")
-  }
-  
 }
